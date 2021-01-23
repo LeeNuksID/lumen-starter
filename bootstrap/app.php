@@ -59,6 +59,7 @@ $app->singleton(
 */
 
 $app->configure('app');
+$app->configure('cors');
 
 /*
 |--------------------------------------------------------------------------
@@ -69,15 +70,12 @@ $app->configure('app');
 | be global middleware that run before and after each request into a
 | route or middleware that'll be assigned to some specific routes.
 |
-*/
-
-$app->middleware([
-    App\Http\Middleware\CorsMiddleware::class
-]);
+*/  
 
 $app->routeMiddleware([
     'auth' => App\Http\Middleware\Authenticate::class,
 ]);
+
 
 /*
 |--------------------------------------------------------------------------
@@ -92,11 +90,11 @@ $app->routeMiddleware([
 
 $app->register(App\Providers\AppServiceProvider::class);
 $app->register(App\Providers\AuthServiceProvider::class);
-$app->register(Flipbox\LumenGenerator\LumenGeneratorServiceProvider::class);
 $app->register(\Tymon\JWTAuth\Providers\LumenServiceProvider::class);
 if ('local' === $app->environment()) {
     $app->register(\Flipbox\LumenGenerator\LumenGeneratorServiceProvider::class);
 }
+$app->register(Fruitcake\Cors\CorsServiceProvider::class);
 
 // $app->register(App\Providers\EventServiceProvider::class);
 
