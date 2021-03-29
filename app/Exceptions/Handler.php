@@ -2,6 +2,10 @@
 
 namespace App\Exceptions;
 
+use App\Serializers\ErrorSerializer;
+use App\Traits\ExceptionRenderable;
+use App\Transformers\ErrorTransformer;
+use Error;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Validation\ValidationException;
@@ -11,6 +15,8 @@ use Throwable;
 
 class Handler extends ExceptionHandler
 {
+    use ExceptionRenderable;
+
     /**
      * A list of the exception types that should not be reported.
      *
@@ -22,6 +28,20 @@ class Handler extends ExceptionHandler
         ModelNotFoundException::class,
         ValidationException::class,
     ];
+
+    /**
+     * The transformer class for the error.
+     *
+     * @var string
+     */
+    protected $transformer = ErrorTransformer::class;
+
+    /**
+     * The serializer class for the error.
+     *
+     * @var string
+     */
+    protected $serializer = ErrorSerializer::class;
 
     /**
      * Report or log an exception.
@@ -42,13 +62,17 @@ class Handler extends ExceptionHandler
      * Render an exception into an HTTP response.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Throwable  $exception
+     * @param  \Throwable                $exception
      * @return \Illuminate\Http\Response|\Illuminate\Http\JsonResponse
      *
      * @throws \Throwable
      */
     public function render($request, Throwable $exception)
     {
+        if ($this->checkIfJsonRenderable($exception)) {
+            return $this->renderJson($request, $exception);
+        }
+
         return parent::render($request, $exception);
     }
 }

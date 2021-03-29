@@ -24,7 +24,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      * @var array
      */
     protected $fillable = [
-        'name', 'email',
+        'username','password'
     ];
 
     /**
@@ -53,9 +53,9 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     public function rules(): array
     {
         return [
-            '*' => [
-                'name' => 'required',
-            ],
+            // '*' => [
+            //     'name' => 'required',
+            // ],
             'CREATE' => [
                 'email' => 'required|unique:users,email',
                 'password' => 'required|min:6',

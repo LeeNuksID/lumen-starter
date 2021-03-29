@@ -27,10 +27,9 @@ class AuthController extends Controller
      * @param  Illuminate\Http\Request  $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(Request $request): JsonResponse
-    {
-        $token = $this->auth->authenticateByEmailAndPassword(
-            (string) $request->input('email'),
+    public function store(Request $request): JsonResponse{
+        $token = $this->auth->authenticateUsernameAndPassword(
+            (string) $request->input('username'),
             (string) $request->input('password')
         );
 
@@ -46,19 +45,19 @@ class AuthController extends Controller
     public function register(Request $request): JsonResponse
     {
 
-        if (!$request->input('email')) {
-            return response()->json(['error' => 'email dibutuhkan']);
+        if (!$request->input('username')) {
+            return response()->json(['error' => 'username dibutuhkan']);
         }elseif(!$request->input('password')){
             return response()->json(['error' => 'password dibutuhkan']);
         }
         
         User::create([
-            'email'     => $request->input('email'),
+            'username'  => $request->input('username'),
             'password'  => $request->input('password')
         ]);
 
-        $token = $this->auth->authenticateByEmailAndPassword(
-            (string) $request->input('email'),
+        $token = $this->auth->authenticateUsernameAndPassword(
+            (string) $request->input('username'),
             (string) $request->input('password')
         );
 
@@ -103,7 +102,7 @@ class AuthController extends Controller
 
     public function update_email(Request $request, $id){
         $update = User::find($id)->update([
-            'email'     => $request->email
+            'username'     => $request->username
         ]);
         if ($update) {
             return response()->json('success');
